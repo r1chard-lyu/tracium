@@ -55,34 +55,14 @@ All communication must follow the JSON-RPC 2.0 specification. Each JSON object m
 Before you can call any tools, you must first send an `initialize` request to the server.
 
 ```json
-{
-  "jsonrpc": "2.0",
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "1.0",
-    "capabilities": {},
-    "clientInfo": {
-      "name": "Your Client Name",
-      "version": "1.0.0"
-    }
-  },
-  "id": 0
-}
+{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "1.0", "capabilities": {}, "clientInfo": {"name": "Terminal Client", "version": "1.0.0"}}, "id": 0}
 ```
 
 ### Tool Call Format
 To execute a command, you must use the `tools/call` method. The tool's name is specified in `params.name`, and its arguments are passed in `params.arguments`.
 
 ```json
-{
-  "jsonrpc": "2.0",
-  "method": "tools/call",
-  "params": {
-    "name": "<tool_name>",
-    "arguments": { ... }
-  },
-  "id": 1
-}
+{"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "<tool_name>", "arguments": { ... }}, "id": 1}
 ```
 
 ### Response Format
@@ -91,29 +71,7 @@ The server will return a JSON-RPC 2.0 response object.
 
 ```json
 // Success
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "<tool_output>"
-      }
-    ],
-    "isError": false
-  }
-}
-
-// Failure
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "error": {
-    "code": <error_code>,
-    "message": "<error_description>"
-  }
-}
+{"jsonrpc": "2.0", "id": 1, "result": {"content": [{"type": "text", "text": "<tool_output>"}], "isError": false}}
 ```
 
 ## Available Tools
@@ -129,11 +87,7 @@ Checks if the server is running.
 
 **Successful Response Snippet:**
 ```json
-{
-    "result": {
-        "content": [{"type": "text", "text": "Server is running and ready."}]
-    }
-}
+{"result": {"content": [{"type": "text", "text": "Server is running and ready."}]}}
 ```
 
 ### 2. echo
@@ -147,11 +101,7 @@ The server will echo back any content you send in the `arguments`. This is usefu
 
 **Successful Response Snippet:**
 ```json
-{
-    "result": {
-        "content": [{"type": "text", "text": "{\"message\": \"hello world\", \"value\": 123}"}]
-    }
-}
+{"result": {"content": [{"type": "text", "text": "{\"message\": \"hello world\", \"value\": 123}"}]}}
 ```
 
 ### 3. stop
@@ -165,11 +115,7 @@ Shuts down the server.
 
 **Successful Response Snippet:**
 ```json
-{
-    "result": {
-        "content": [{"type": "text", "text": "Server shutting down."}]
-    }
-}
+{"result": {"content": [{"type": "text", "text": "Server shutting down."}]}}
 ```
 The server will terminate after sending this response.
 
@@ -184,11 +130,7 @@ Executes `top -b -n 1` to get a single snapshot of the current processes.
 
 **Successful Response Snippet:**
 ```json
-{
-    "result": {
-        "content": [{"type": "text", "text": "<output of the top command>"}]
-    }
-}
+{"result": {"content": [{"type": "text", "text": "<output of the top command>"}]}}
 ```
 
 ### 5. perf
@@ -202,9 +144,5 @@ Executes the `perf` tool with the specified arguments. The `arguments` must cont
 
 **Successful Response Snippet:**
 ```json
-{
-    "result": {
-        "content": [{"type": "text", "text": "<output of the perf command>"}]
-    }
-}
+{"result": {"content": [{"type": "text", "text": "<output of the perf command>"}]}}
 ```
