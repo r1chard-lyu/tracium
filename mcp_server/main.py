@@ -64,6 +64,45 @@ def perf(args: list[str]):
     except subprocess.CalledProcessError as e:
         return f"Error executing perf command: {e.stderr}"
 
+
+@mcp.tool
+def strace_help():
+    """Returns the help text for `strace -h`.
+
+    Many versions of `strace` print help to stderr and exit with a non-zero code,
+    so we capture both stdout and stderr and return whichever contains text.
+    """
+    try:
+        result = subprocess.run(["strace", "-h"], capture_output=True, text=True)
+        output = (result.stdout or "") + (result.stderr or "")
+        if not output:
+            return "strace executed but produced no output."
+        return output
+    except FileNotFoundError:
+        return "Error: 'strace' command not found. Please ensure strace is installed and in your PATH."
+    except Exception as e:
+        return f"Unexpected error while running strace: {str(e)}"
+
+
+@mcp.tool
+def strace_version():
+    """Gets the installed strace version.
+
+    Some `strace` implementations print version info to stdout and some to stderr.
+    Capture both and return whichever contains text. Provide a friendly error if
+    `strace` is not installed.
+    """
+    try:
+        result = subprocess.run(["strace", "--version"], capture_output=True, text=True)
+        output = (result.stdout or "") + (result.stderr or "")
+        if not output:
+            return "strace executed but produced no output."
+        return output
+    except FileNotFoundError:
+        return "Error: 'strace' command not found. Please ensure strace is installed and in your PATH."
+    except Exception as e:
+        return f"An unexpected error occurred: {str(e)}"
+
 # --- bpftrace Tools ---
 
 @mcp.tool
@@ -133,4 +172,22 @@ def bpftrace_list():
 # --- Main Execution ---
 
 if __name__ == "__main__":
-    mcp.run()
+    import argparse
+    import code
+
+    parser = argparse.ArgumentParser(description="Run Tracium MCP Server")
+    parser.add_argument("--shell", action="store_true", help="Start an interactive Python shell with `mcp` available")
+    args = parser.parse_args()
+
+    if args.shell:
+        print("Starting interactive Python shell. The `mcp` object is available as a variable named `mcp`.")
+        try:
+            # Prefer IPython if available for a richer shell
+            from IPython import embed
+
+            embed(user_ns={"mcp": mcp})
+        except Exception:
+            # Fallback to the standard library interactive console
+            code.interact(local={"mcp": mcp}, banner="Interactive shell — `mcp` available")
+    else:
+        mcp.run()
