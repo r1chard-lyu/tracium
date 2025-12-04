@@ -12,6 +12,9 @@ This project contains a simple implementation of a MCP server that communicates 
 ## Files
 
 - `mcp_server/main.py`: The main server executable.
+- `mcp_server/tools`: Contains Bpftrace tools synchronized with
+    the upstream repository.
+    https://github.com/bpftrace/bpftrace/tree/master/tools
 - `requirements.txt`: Contains the required Python packages.
 - `setup.sh`: Setup systracesuite's whitelisted tools so they can run with passwordless sudo. The MCP Server cannot trigger the Gemini CLI interactive shell to prompt the user for privilege escalation.
 
